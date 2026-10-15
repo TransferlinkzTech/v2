@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #040a1a;
+  --foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plus-jakarta-sans);
+
+  /* Brand */
+  --color-brand: #2563eb;
+  --color-brand-hover: #1d4ed8;
+
+  /* Dark surfaces used across the landing page */
+  --color-ink-950: #020610;
+  --color-ink-900: #040a1a;
+  --color-line: #1d2331;
+  --color-frame: #475069;
+  --color-hairline: #1c1f28;
+
+  /* Light sections */
+  --color-line-light: #e7eaf3;
+  --color-muted: #a7a9b7;
+  --color-navy: #313858;
+
+  /* Frame lines on dark sections */
+  --color-edge: #6a7081;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Hide the page scrollbar; scrolling (wheel, touch, keyboard) still works. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Warm glow behind the section 5 heading and a blue glow under the product,
+   used by the "pattern" (tour operator) look. */
+.role-pattern-glow {
+  background:
+    radial-gradient(
+      560px 330px at 50% 260px,
+      rgba(255, 170, 30, 0.09),
+      transparent 70%
+    ),
+    radial-gradient(
+      420px 130px at calc(100% - 339px) 930px,
+      rgba(37, 99, 235, 0.32),
+      transparent 100%
+    );
+}
+
+/* Scroll reveal (see components/reveal). Hidden until in view, then plays once
+   and leaves the element's own styles untouched. */
+.reveal-hidden {
+  opacity: 0;
+  translate: 0 28px;
+}
+
+.reveal-in {
+  animation: reveal-up 800ms cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+}
+
+.reveal-fade {
+  animation-name: reveal-fade;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hero dot grid: six interleaved random groups of dots, each twinkling on its
+   own irregular rhythm so the field looks like it flickers at random. */
+.hero-dots {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 48% 22% at 50% 32%,
+      rgba(223, 230, 255, 0.7) 0%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 55%, rgba(59, 108, 240, 0.52) 100%);
+  -webkit-mask-size: 360px 360px;
+  mask-size: 360px 360px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  animation: dot-flicker var(--dur, 5s) linear var(--delay, 0s) infinite;
+  will-change: opacity;
+}
+
+.hero-dots-0 {
+  -webkit-mask-image: url("/images/hero-dots-0.svg");
+  mask-image: url("/images/hero-dots-0.svg");
+  --dur: 4.3s;
+  --delay: -0.4s;
+}
+.hero-dots-1 {
+  -webkit-mask-image: url("/images/hero-dots-1.svg");
+  mask-image: url("/images/hero-dots-1.svg");
+  --dur: 5.7s;
+  --delay: -2.1s;
+}
+.hero-dots-2 {
+  -webkit-mask-image: url("/images/hero-dots-2.svg");
+  mask-image: url("/images/hero-dots-2.svg");
+  --dur: 3.9s;
+  --delay: -3.3s;
+}
+.hero-dots-3 {
+  -webkit-mask-image: url("/images/hero-dots-3.svg");
+  mask-image: url("/images/hero-dots-3.svg");
+  --dur: 7.1s;
+  --delay: -1.7s;
+}
+.hero-dots-4 {
+  -webkit-mask-image: url("/images/hero-dots-4.svg");
+  mask-image: url("/images/hero-dots-4.svg");
+  --dur: 6.1s;
+  --delay: -5.2s;
+}
+.hero-dots-5 {
+  -webkit-mask-image: url("/images/hero-dots-5.svg");
+  mask-image: url("/images/hero-dots-5.svg");
+  --dur: 4.9s;
+  --delay: -0.9s;
+}
+
+@keyframes dot-flicker {
+  0% {
+    opacity: 0.3;
+  }
+  14% {
+    opacity: 1;
+  }
+  27% {
+    opacity: 0.45;
+  }
+  46% {
+    opacity: 0.95;
+  }
+  63% {
+    opacity: 0.25;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-hidden {
+    opacity: 1;
+    translate: none;
+  }
+
+  .reveal-in {
+    animation: none;
+  }
+
+  .hero-dots {
+    animation: none;
+    opacity: 0.7;
+  }
 }
