@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { GuestMockup } from "@/components/guest-mockup";
 import { Reveal } from "@/components/reveal";
 import type { Role } from "../roles";
-import { GuestMockup } from "./guest-mockup";
 
 type RoleVisualProps = {
   role: Role;

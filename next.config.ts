@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Stops `next dev` from generating AGENTS.md
+  agentRules: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

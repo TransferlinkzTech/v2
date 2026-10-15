@@ -154,6 +154,15 @@ body {
   --delay: -0.9s;
 }
 
+/* Warm variant (About page): salmon dots gathered at the bottom centre. */
+.hero-dots-warm .hero-dots {
+  background: radial-gradient(
+    ellipse 38% 62% at 50% 100%,
+    rgba(255, 170, 130, 0.95) 0%,
+    transparent 100%
+  );
+}
+
 @keyframes dot-flicker {
   0% {
     opacity: 0.3;
@@ -178,6 +187,205 @@ body {
   }
 }
 
+/* Page transitions (see app/template.tsx). A quick fade out, then a slightly
+   slower fade in. Opacity only: each page already staggers its own content in,
+   so moving it here too would double up. Browsers that lack the View
+   Transitions API ignore all of this and navigate as normal. */
+::view-transition {
+  /* Let clicks through to the live page while a transition plays */
+  pointer-events: none;
+}
+
+::view-transition-old(.page-exit) {
+  animation: page-fade-out 140ms ease-in both;
+}
+
+::view-transition-new(.page-enter) {
+  animation: page-fade-in 260ms ease-out 80ms both;
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Interactive cards (see components/card-glow): a soft lift, a faint wash and a
+   glowing edge that follows the cursor. Only where the device can hover.
+   --glow-color is set per card; it defaults to the brand blue. */
+.card-interactive {
+  position: relative;
+  transition:
+    transform 250ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 250ms ease;
+}
+
+.card-interactive::before,
+.card-interactive::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+/* The edge: a 1px ring cut out of a radial gradient centred on the cursor */
+.card-interactive::before {
+  inset: -1px;
+  padding: 1px;
+  background: radial-gradient(
+    220px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(37, 99, 235, 0.7),
+    transparent 70%
+  );
+  background: radial-gradient(
+    220px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    color-mix(in srgb, var(--glow-color, #2563eb) 75%, transparent),
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+/* A very faint wash of the same colour under the cursor */
+.card-interactive::after {
+  inset: 0;
+  background: radial-gradient(
+    260px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    rgba(37, 99, 235, 0.06),
+    transparent 70%
+  );
+  background: radial-gradient(
+    260px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+    color-mix(in srgb, var(--glow-color, #2563eb) 7%, transparent),
+    transparent 70%
+  );
+}
+
+@media (hover: hover) {
+  .card-interactive:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -24px rgba(49, 56, 88, 0.4);
+  }
+
+  .card-interactive:hover::before,
+  .card-interactive:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Buttons: a small lift on hover that settles back down on press. The -brand
+   and -soft modifiers add a coloured or neutral shadow under the lift. */
+.btn-lift {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.btn-lift:active {
+  transform: translateY(0);
+}
+
+@media (hover: hover) {
+  .btn-lift:not(:disabled):hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-lift-brand:not(:disabled):hover {
+    box-shadow: 0 10px 22px -10px rgba(37, 99, 235, 0.75);
+  }
+
+  .btn-lift-soft:not(:disabled):hover {
+    box-shadow: 0 10px 22px -14px rgba(49, 56, 88, 0.5);
+  }
+}
+
+/* Route arcs on the closing illustration (components/cta-section/
+   cta-illustration/route-arcs). The state is a data attribute set by the
+   component: waiting, playing or paused. With no attribute (no JavaScript, or
+   reduced motion) the routes sit fully drawn and still. */
+.route-arcs [data-reveal] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.route-arcs[data-state="waiting"] [data-reveal] {
+  stroke-dashoffset: 1;
+}
+
+.route-arcs[data-state="playing"] [data-reveal],
+.route-arcs[data-state="paused"] [data-reveal] {
+  animation: route-draw var(--draw-duration, 1.4s) cubic-bezier(0.45, 0, 0.25, 1)
+    var(--draw-delay, 0s) both;
+}
+
+/* Dashes travel along each route, in the direction it was drawn */
+.route-arcs[data-state="playing"] [data-flow],
+.route-arcs[data-state="paused"] [data-flow] {
+  animation: route-flow 1.6s linear infinite;
+}
+
+/* A ring that spreads out from each pin and fades */
+.route-ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.route-arcs[data-state="playing"] .route-ring,
+.route-arcs[data-state="paused"] .route-ring {
+  animation: route-ring 3.6s ease-out var(--ring-delay, 0s) infinite;
+}
+
+/* Off screen: freeze everything where it is (same specificity as the rules
+   above, and later, so this wins over their animation shorthand) */
+.route-arcs[data-state="paused"] [data-reveal],
+.route-arcs[data-state="paused"] [data-flow],
+.route-arcs[data-state="paused"] .route-ring {
+  animation-play-state: paused;
+}
+
+@keyframes route-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: -37;
+  }
+}
+
+@keyframes route-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.5);
+  }
+  45%,
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-hidden {
     opacity: 1;
@@ -191,5 +399,25 @@ body {
   .hero-dots {
     animation: none;
     opacity: 0.7;
+  }
+
+  .route-arcs *,
+  .route-ring {
+    animation: none !important;
+  }
+
+  /* No lifting; colour and glow changes on hover stay */
+  .card-interactive,
+  .card-interactive:hover,
+  .btn-lift,
+  .btn-lift:not(:disabled):hover {
+    transform: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

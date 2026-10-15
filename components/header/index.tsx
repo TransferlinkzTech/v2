@@ -4,8 +4,8 @@ import { AnnouncementBar } from "./announcement-bar";
 import { NavLink } from "./nav-link";
 
 const NAV_LINKS = [
-  { label: "Contact Us", href: "#" },
-  { label: "About us", href: "#" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "About us", href: "/about" },
 ];
 
 export function Header() {

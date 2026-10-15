@@ -22,7 +22,7 @@ export function FeatureCard({
     <Reveal
       as="article"
       delay={delay}
-      className={`rounded-[5px] p-6 lg:h-[244px] lg:p-10 ${tint}`}
+      className={`card-interactive rounded-[5px] p-6 lg:h-[244px] lg:p-10 ${tint}`}
     >
       <div className="flex size-8 items-center justify-center">
         <Image

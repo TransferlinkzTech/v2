@@ -41,11 +41,7 @@ export function Section4() {
 
         <div className="mt-12 grid gap-5 lg:mt-20 lg:grid-cols-3">
           {FEATURES.map((feature, index) => (
-            <FeatureCard
-              key={feature.title}
-              delay={index * 120}
-              {...feature}
-            />
+            <FeatureCard key={feature.title} delay={index * 120} {...feature} />
           ))}
         </div>
       </div>

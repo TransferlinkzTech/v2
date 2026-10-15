@@ -33,7 +33,7 @@ export function PlanCard({ plan }: PlanCardProps) {
       </p>
 
       <Link
-        href="#"
+        href={plan.ctaHref}
         className="-mx-px mt-auto block rounded-[4px] border border-[#d0d6e8] bg-white py-3 text-center text-sm leading-5 font-medium transition-colors hover:bg-[#eef4ff]"
       >
         {plan.cta}

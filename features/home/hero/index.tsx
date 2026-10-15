@@ -1,7 +1,7 @@
+import { HeroBackground } from "@/components/hero-background";
 import { JoinWaitlistButton } from "@/components/join-waitlist-button";
 import { Reveal } from "@/components/reveal";
 import { SeeFeaturesButton } from "@/components/see-features-button";
-import { HeroBackground } from "./hero-background";
 import { HeroDashboard } from "./hero-dashboard";
 
 // The hero plays its intro on load (no scroll needed), top to bottom.
