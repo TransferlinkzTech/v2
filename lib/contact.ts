@@ -26,37 +26,6 @@ function enquiryBody(intro: string) {
   ].join("\n");
 }
 
-export type ContactMessage = {
-  name: string;
-  email: string;
-  company: string;
-  role: string;
-  message: string;
-};
-
-// The Contact form has no backend yet, so submitting it opens an email draft
-// to the team with the answers filled in.
-export function contactMessageHref({
-  name,
-  email,
-  company,
-  role,
-  message,
-}: ContactMessage) {
-  return mailto({
-    subject: `TransferLinkz enquiry from ${name}${company ? ` (${company})` : ""}`,
-    body: [
-      message,
-      "",
-      "---",
-      `Name: ${name}`,
-      `Work email: ${email}`,
-      `Company: ${company}`,
-      `I am a: ${role}`,
-    ].join("\n"),
-  });
-}
-
 // Early access is a form on its own page (the signups go to the database)
 export const WAITLIST_HREF = "/waitlist";
 

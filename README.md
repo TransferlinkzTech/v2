@@ -34,12 +34,12 @@ The page is built section by section from the design files, top to bottom:
 
 ### Other pages
 
-| Route        | Feature              | Status                                                     |
-| ------------ | -------------------- | ---------------------------------------------------------- |
-| `/`          | `features/home`      | Complete                                                   |
-| `/solutions` | `features/solutions` | Complete (copy in `docs/solutions-page-content.md`)        |
-| `/waitlist`  | `features/waitlist`  | Complete (saves signups to Postgres, needs `DATABASE_URL`) |
-| `/about`     | `features/about`     | Complete                                                   |
-| `/contact`   | `features/contact`   | Complete (the form opens an email draft)                   |
-| `/privacy`   | `features/privacy`   | Complete (content has placeholders to fill in)             |
-| `/terms`     | `features/terms`     | Complete (content has placeholders to fill in)             |
+| Route        | Feature              | Status                                                        |
+| ------------ | -------------------- | ------------------------------------------------------------- |
+| `/`          | `features/home`      | Complete                                                      |
+| `/solutions` | `features/solutions` | Complete (copy in `docs/solutions-page-content.md`)           |
+| `/waitlist`  | `features/waitlist`  | Complete (saves signups to Postgres, sends a thank-you email) |
+| `/about`     | `features/about`     | Complete                                                      |
+| `/contact`   | `features/contact`   | Complete (emails the team and replies to the visitor)         |
+| `/privacy`   | `features/privacy`   | Complete (have a lawyer review the text)                      |
+| `/terms`     | `features/terms`     | Complete (have a lawyer review the text)                      |

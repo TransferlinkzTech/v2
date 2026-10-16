@@ -460,7 +460,7 @@ export const PRIVACY_POLICY: LegalDocumentContent = {
         },
         {
           type: "p",
-          text: "**Why we use it.** We use these details to reply to your message, to contact you about early access to the Platform, and to keep a record of who has asked to hear from us. We do not sell them.",
+          text: "**Why we use it.** We use these details to reply to your message, to send you a confirmation email, to contact you about early access to the Platform, and to keep a record of who has asked to hear from us. We do not sell them.",
         },
         {
           type: "p",
@@ -468,7 +468,7 @@ export const PRIVACY_POLICY: LegalDocumentContent = {
         },
         {
           type: "p",
-          text: "**Where it is stored.** Waitlist details are kept in a database run by our hosting and infrastructure providers, who act as our sub-processors (see section 5.2).",
+          text: "**Where it is stored.** Waitlist details are kept in a database run by our hosting and infrastructure providers. Messages sent through the contact form reach us as email, and the emails we send are delivered by our email provider, Zoho Mail. They act as our sub-processors (see section 5.2).",
         },
         {
           type: "p",
