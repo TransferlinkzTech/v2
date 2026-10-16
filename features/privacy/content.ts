@@ -1,10 +1,10 @@
 import type { LegalDocumentContent } from "@/components/legal-document/types";
 
-// Converted from the supplied .docx in ui-web-designs/4-legal. Placeholders in
-// [square brackets] still need real values; {email} becomes the support address.
+// Converted from the supplied .docx in ui-web-designs/4-legal. {email} becomes
+// the support address.
 export const PRIVACY_POLICY: LegalDocumentContent = {
   title: "Privacy Policy",
-  effective: "[Insert Date]",
+  effective: "1 October 2026",
   intro: [
     {
       type: "p",
@@ -21,7 +21,7 @@ export const PRIVACY_POLICY: LegalDocumentContent = {
       blocks: [
         {
           type: "p",
-          text: "Transferlinkz Ltd\n[Insert Registered Address]\nEmail: {email}",
+          text: "Transferlinkz Ltd\n257 James Smith Court, DA1 5XJ\nEmail: {email}",
         },
         {
           type: "p",
@@ -444,6 +444,39 @@ export const PRIVACY_POLICY: LegalDocumentContent = {
         {
           type: "p",
           text: "Users can manage cookie preferences through their browser settings.",
+        },
+      ],
+    },
+    {
+      title: "Website visitors and the waitlist",
+      blocks: [
+        {
+          type: "p",
+          text: "This section covers people who visit our website, join our waitlist or contact us through it. For this information, Transferlinkz is the Data Controller.",
+        },
+        {
+          type: "p",
+          text: "**What we collect.** When you join the waitlist, we collect your name, your email address and, if you choose to give it, your company name. When you contact us, we collect what you enter in the contact form or include in your email, such as your name, work email, company, the kind of business you run and your message.",
+        },
+        {
+          type: "p",
+          text: "**Why we use it.** We use these details to reply to your message, to contact you about early access to the Platform, and to keep a record of who has asked to hear from us. We do not sell them.",
+        },
+        {
+          type: "p",
+          text: "**Our legal basis.** Our legitimate interest in responding to enquiries and running our early access programme. Where you ask us to take steps before entering into a contract with you, the legal basis is taking those steps.",
+        },
+        {
+          type: "p",
+          text: "**Where it is stored.** Waitlist details are kept in a database run by our hosting and infrastructure providers, who act as our sub-processors (see section 5.2).",
+        },
+        {
+          type: "p",
+          text: "**How long we keep it.** For as long as we need it to stay in touch with you about early access, and no longer than is necessary (see section 8). We delete it when you ask us to.",
+        },
+        {
+          type: "p",
+          text: "**Your choices.** You can ask to be removed from the waitlist, or to see, correct or delete your details, at any time by emailing {email}. See section 9 for all of your rights.",
         },
       ],
     },

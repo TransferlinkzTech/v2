@@ -1,29 +1,34 @@
 {
-  "name": "web-v2",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "db:migrate": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/db-migrate.mjs"
-  },
-  "dependencies": {
-    "next": "16.4.1",
-    "pg": "^8.23.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/pg": "^8.23.1",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+	"name": "web-v2",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev -p 5678",
+		"build": "next build",
+		"start": "next start",
+		"lint": "eslint",
+		"db:migrate": "node --env-file-if-exists=.env --env-file-if-exists=.env.local ./node_modules/purplekit/build/src/app.js migrate",
+		"db:status": "node --env-file-if-exists=.env --env-file-if-exists=.env.local ./node_modules/purplekit/build/src/app.js status",
+		"db:gen": "node --env-file-if-exists=.env --env-file-if-exists=.env.local ./node_modules/purplekit/build/src/app.js gen"
+	},
+	"dependencies": {
+		"next": "16.4.1",
+		"pg": "^8.23.1",
+		"react": "19.3.0",
+		"react-dom": "19.3.0"
+	},
+	"devDependencies": {
+		"@tailwindcss/turbopack": "^4",
+		"@types/node": "^20",
+		"@types/pg": "^8.23.1",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"eslint": "^9",
+		"eslint-config-next": "16.4.1",
+		"purplekit": "^1.0.5",
+		"reflect-metadata": "^0.2.2",
+		"tailwindcss": "^4",
+		"typeorm": "^0.3.31",
+		"typescript": "^5"
+	}
 }

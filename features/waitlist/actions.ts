@@ -32,10 +32,16 @@ export async function joinWaitlist(
     // An address that is already on the list is left as it is, and still gets
     // the success message. That keeps this form from revealing who has signed
     // up, and stops anyone overwriting someone else's details.
+    //
+    // "on conflict do nothing" deliberately names no column. Naming one
+    // ("on conflict (email)") makes Postgres check that column, which needs
+    // SELECT permission, and the website's database user may only INSERT
+    // (see db/setup-roles.sql). Email is the table's only unique rule, so the
+    // result is the same.
     await getPool().query(
       `insert into waitlist_signups (name, email, company)
        values ($1, $2, $3)
-       on conflict (email) do nothing`,
+       on conflict do nothing`,
       [name, email, company],
     );
   } catch (error) {

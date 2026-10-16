@@ -1,10 +1,10 @@
 import type { LegalDocumentContent } from "@/components/legal-document/types";
 
-// Converted from the supplied .docx in ui-web-designs/4-legal. Placeholders in
-// [square brackets] still need real values; {email} becomes the support address.
+// Converted from the supplied .docx in ui-web-designs/4-legal. {email} becomes
+// the support address.
 export const TERMS_OF_SERVICE: LegalDocumentContent = {
   title: "Terms of Service",
-  effective: "[Insert Date]",
+  effective: "1 October 2026",
   intro: [
     {
       type: "p",
@@ -163,7 +163,7 @@ export const TERMS_OF_SERVICE: LegalDocumentContent = {
               type: "list",
               items: [
                 "Fees shall be invoiced in accordance with agreed billing cycles",
-                "Payment is due within [14 days] of invoice date unless otherwise agreed",
+                "Payment is due within 28 days of invoice date unless otherwise agreed",
                 "All fees are exclusive of applicable taxes",
               ],
             },

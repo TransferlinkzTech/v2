@@ -71,7 +71,9 @@ Then open [http://localhost:3000](http://localhost:3000). If that port is taken,
 | `npm run build` | Create a production build                     |
 | `npm start`     | Serve the production build                    |
 | `npm run lint`  | Run ESLint                                    |
-| `npm run db:migrate` | Create or update the database tables (needs `DATABASE_URL`) |
+| `npm run db:status` | Show which migrations have been applied (uses purplekit) |
+| `npm run db:migrate` | Apply any pending database migrations (uses purplekit) |
+| `npm run db:gen -- --name <Name>` | Generate a migration from changes to the entities in `db/entities` |
 
 > **Tip:** don't run `npm run build` while `npm run dev` is running. They share the `.next` folder, and the dev server can end up serving stale styles. If styles ever look out of date after you edit `app/globals.css`, stop the dev server, delete `.next`, and start it again.
 
@@ -149,6 +151,12 @@ lib/
   og/                   Font and logo loaders for the share card
 
 public/images/          Optimised images and generated SVG textures
+db/
+  entities/             The table definitions purplekit generates migrations from
+  setup-roles.sql       One-time admin script: the website and owner database users
+purplekit/
+  purplekit.config.ts   Connection settings, read from the .env variables
+  migrations/           Generated and hand-written migrations
 docs/brand/             Logo files used by this README
 ```
 
@@ -195,20 +203,40 @@ The waitlist form (`/waitlist`) saves each signup (name, email and an optional c
 
 **Set it up**
 
-1. Create a `.env.local` file (it is git-ignored) with the connection string:
+1. **A database and two limited users (recommended).** Create a database for the site (the Aiven console's Databases tab does it; ours is called `waitlist`), then, as the admin, run `db/setup-roles.sql` once. The file explains how to run it. It creates two users that can only reach that database:
+   - `transferlinkz_web`, which the live site connects as. It can **insert** signups and nothing else: it can't read, change or delete rows, or create anything.
+   - `transferlinkz_owner`, which creates the table. It is used only to run migrations, and to look at the signups.
+
+   Don't point the site at a database that holds another application's data, or at an admin user.
+
+   You can skip the two users and use one login (even the admin) for everything: set only `DATABASE_URL`, and purplekit uses it for the migrations too. It works, but the website then holds a credential that can change or read anything in the database. Run this file later to switch over; it works whether or not the tables exist yet, and you then point `DATABASE_URL` at the website user.
+2. **Connection settings.** Create a `.env.local` file (it is git-ignored). The same variables have to be set on the host where the site is deployed:
 
    ```bash
-   DATABASE_URL=postgres://user:password@host:5432/dbname
+   # The live site: the limited user
+   DATABASE_URL=postgres://transferlinkz_web:password@host:5432/waitlist?sslmode=require
+   # Migrations only: the owner user
+   DATABASE_MIGRATE_URL=postgres://transferlinkz_owner:password@host:5432/waitlist?sslmode=require
    ```
 
-   Add `?sslmode=require` to the end if the host needs SSL. The same variable has to be set on the host where the site is deployed.
-2. Create the table:
+   Some hosts (Aiven, for one) sign their database certificates with their own certificate authority, which Node doesn't trust by default, and the connection then fails with `SELF_SIGNED_CERT_IN_CHAIN`. Download the CA certificate from the host's console and put its text in `DATABASE_CA_CERT` (in `.env.local`, and on the host). The connection stays fully verified. Don't turn certificate checking off to get past the error.
+3. **Create the table:**
 
    ```bash
-   npm run db:migrate
+   npm run db:status    # shows what is pending (nothing is changed)
+   npm run db:migrate   # creates the table and the website user's permissions
    ```
 
-   It applies `db/schema.sql`, and is safe to run again.
+   The migrations run as `DATABASE_MIGRATE_URL` (or `DATABASE_URL` when that isn't set), and are safe to run again.
+
+**Database tooling: purplekit**
+
+Migrations are managed with [purplekit](https://purplekit.vercel.app) (a dev-only dependency, along with `typeorm`), and the live site doesn't use either: it inserts with plain SQL through `pg`.
+
+- `db/entities/waitlist-signup.schema.ts` describes the table. After changing an entity, run `npm run db:gen -- --name WhatChanged` to write a migration into `purplekit/migrations/`, check it, then `npm run db:migrate`.
+- `purplekit/purplekit.config.ts` reads the same `DATABASE_MIGRATE_URL` / `DATABASE_CA_CERT` settings as the app. It **refuses to run against `defaultdb`, `postgres` or `template1`**, because purplekit records its work in a table called `migrations` that a shared database often already has for another application.
+- `purplekit/migrations/GrantWaitlistWebInsert…` is written by hand: TypeORM doesn't track permissions, so it gives the website user INSERT on the table and use of its id sequence, and nothing more.
+- **Known limitation:** purplekit currently connects with `rejectUnauthorized: false` even in its CA ("heavy") mode, so the connection is encrypted but the server's certificate isn't verified. The one-line fix is in purplekit's `libs/create-ds.js` (`rejectUnauthorized: cfg.SSL_TYPE === 'heavy'`). The live site's own connection (`lib/db.ts`) is fully verified.
 
 **How it behaves**
 
@@ -220,9 +248,13 @@ The waitlist form (`/waitlist`) saves each signup (name, email and an optional c
 
 **See the signups**
 
+The website user can't read them, on purpose. Connect as `transferlinkz_owner` (or the admin) and run:
+
 ```sql
 select name, email, company, created_at from waitlist_signups order by created_at desc;
 ```
+
+**One thing to know if you change the insert:** `features/waitlist/actions.ts` uses `on conflict do nothing` without naming a column. Naming one (`on conflict (email)`) would need SELECT permission, which the website user doesn't have, and every signup would fail.
 
 ## SEO and metadata
 
@@ -245,11 +277,11 @@ select name, email, company, created_at from waitlist_signups order by created_a
 
 These are known placeholders:
 
-- **Waitlist database:** set `DATABASE_URL` on the host and run `npm run db:migrate` against it (see "Waitlist and database").
+- **Waitlist database:** set `DATABASE_URL` on the host and run `npm run db:migrate` against it (see "Waitlist and database"). Migrations run from your machine, not on the host.
 - **"Talk to Us"** (the enterprise plan) still opens an email to `support@transferlinkz.com`. The address and wording live in `lib/contact.ts`.
 - **The FAQ answer "How do I get started?"** (from the PDF) still says early access opens an email to the team. It now opens the waitlist form, so the answer needs updating in `components/faq-section/faqs.ts`.
 - **The Contact form** has no backend yet: submitting it opens an email draft to `support@transferlinkz.com` with the answers filled in (`contactMessageHref` in `lib/contact.ts`). Swap `handleSubmit` in `features/contact/hero/contact-form` for a real endpoint when there is one.
-- **Legal documents** (`features/privacy/content.ts`, `features/terms/content.ts`) were converted from the `.docx` files in `ui-web-designs/4-legal`, and there are no designs for them: the layout follows the About page. Fill in the placeholders that are still in [square brackets]: the effective date, the registered address and the payment term ("[14 days]"). Every "[Insert Contact Email]" renders as `support@transferlinkz.com`. Have the text reviewed by a lawyer before launch.
+- **Legal documents** (`features/privacy/content.ts`, `features/terms/content.ts`) were converted from the `.docx` files in `ui-web-designs/4-legal`, and there are no designs for them: the layout follows the About page. The effective date is 1 October 2026, and every "[Insert Contact Email]" renders as `support@transferlinkz.com`. The Privacy Policy's "Website visitors and the waitlist" section (section 11) was drafted for this site, not taken from the original document. Have all of the text reviewed by a lawyer before launch, and confirm the registered address is complete (town and country).
 - **Social profiles** (X, LinkedIn, Instagram) are set in `lib/site.ts` (`socialLinks`) and feed both the footer and the Organization structured data. Check they still point at the right accounts.
 - **FAQ answers** come from `ui-web-designs/1-home/FAQs.pdf` and live in `components/faq-section/faqs.ts`.
 - **Section 5 copy for suppliers, drivers and guests** and the **Guests mockup** were written for this build, because the designs only covered the tour operator view fully (`features/home/section5/roles.ts`).
